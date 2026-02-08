@@ -684,7 +684,17 @@ $.extend( $.validator, {
 		},
 
 		clean: function( selector ) {
-			return $( selector )[ 0 ];
+			// Security fix: Prevent XSS by only accepting DOM elements or jQuery objects
+			// Return the element directly if it's already a DOM node
+			if ( selector && selector.nodeType === 1 ) {
+				return selector;
+			}
+			// If it's a jQuery object, return its first element
+			if ( selector && selector.jquery ) {
+				return selector[ 0 ];
+			}
+			// Otherwise, return null (don't pass strings into $() to prevent HTML evaluation)
+			return null;
 		},
 
 		errors: function() {
@@ -1068,7 +1078,14 @@ $.extend( $.validator, {
 				element = this.findByName( element.name );
 			}
 
-			// Always apply ignore filter
+			// Security fix: Normalize to a DOM element (handles jQuery objects safely)
+			element = this.clean( element );
+
+			if ( !element ) {
+				return undefined;
+			}
+
+			// Always apply ignore filter (only call $() on verified DOM element)
 			return $( element ).not( this.settings.ignore )[ 0 ];
 		},
 
