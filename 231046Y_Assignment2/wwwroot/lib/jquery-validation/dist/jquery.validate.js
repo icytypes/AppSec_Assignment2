@@ -684,39 +684,62 @@ $.extend( $.validator, {
 		},
 
 		clean: function( selector ) {
-			// Security fix: Prevent XSS by safely handling different input types
+			// Security fix: Prevent XSS by ensuring only DOM elements are returned
+			// This function guarantees it never returns strings, only DOM elements or null/undefined
 			
 			// Fast-path: If selector is already a DOM element (nodeType 1 = element, 9 = document)
-			// or window/document object, return it directly
-			if ( selector && ( selector.nodeType === 1 || selector.nodeType === 9 || selector === window || selector === document ) ) {
-				return selector;
+			// or window/document object, return it directly (but only if it's a valid DOM node)
+			if ( selector ) {
+				if ( selector.nodeType === 1 ) {
+					// Valid DOM element
+					return selector;
+				}
+				if ( selector.nodeType === 9 ) {
+					// Document node
+					return selector;
+				}
+				if ( selector === window || selector === document ) {
+					return selector;
+				}
 			}
 			
-			// Fast-path: If selector is a jQuery object or array-like of elements, return first element
-			if ( selector && selector.jquery ) {
-				return selector[ 0 ];
+			// Fast-path: If selector is a jQuery object, extract first DOM element
+			if ( selector && selector.jquery && selector.length > 0 ) {
+				var firstElement = selector[ 0 ];
+				if ( firstElement && firstElement.nodeType === 1 ) {
+					return firstElement;
+				}
 			}
+			
+			// Fast-path: If selector is array-like collection of elements, return first valid element
 			if ( selector && selector.length && selector[ 0 ] && selector[ 0 ].nodeType === 1 ) {
 				return selector[ 0 ];
 			}
 			
 			// For strings: Only allow CSS selectors, reject HTML-like input
+			// CRITICAL: Never return strings, only DOM elements or null
 			if ( typeof selector === "string" ) {
 				// Reject strings that look like HTML (start with <) to prevent HTML evaluation
-				if ( selector.trim().charAt( 0 ) === "<" ) {
+				var trimmed = selector.trim();
+				if ( trimmed.length === 0 || trimmed.charAt( 0 ) === "<" ) {
 					return null;
 				}
 				// For valid selector strings, only search within this.currentForm to prevent XSS
 				// Use .find() which only interprets as CSS selector, not HTML
+				// This ensures we never call $(string) at top level which could interpret HTML
 				if ( this.currentForm ) {
 					var found = $( this.currentForm ).find( selector );
-					return found.length > 0 ? found[ 0 ] : null;
+					// Only return if we found a valid DOM element
+					if ( found.length > 0 && found[ 0 ] && found[ 0 ].nodeType === 1 ) {
+						return found[ 0 ];
+					}
 				}
-				// If no currentForm, return null (safe fallback)
+				// If no currentForm or no match found, return null (safe fallback)
 				return null;
 			}
 			
-			// For any other type, return null (safe fallback)
+			// For any other type (including null, undefined, numbers, objects, etc.), return null
+			// This ensures we never accidentally return a string or unsafe value
 			return null;
 		},
 
