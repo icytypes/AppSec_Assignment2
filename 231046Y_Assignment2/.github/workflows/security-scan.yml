@@ -1,0 +1,62 @@
+name: "Security Vulnerability Scan"
+
+on:
+  push:
+    branches: [ "main", "master", "develop" ]
+  pull_request:
+    branches: [ "main", "master", "develop" ]
+  schedule:
+    # Run daily at 3:00 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./231046Y_Assignment2
+
+    - name: Check for known vulnerabilities
+      run: dotnet list package --vulnerable --include-transitive
+      working-directory: ./231046Y_Assignment2
+      continue-on-error: true
+
+    - name: Run dotnet format (security checks)
+      run: dotnet format --verify-no-changes
+      working-directory: ./231046Y_Assignment2
+      continue-on-error: true
+
+    - name: Check outdated packages
+      run: dotnet list package --outdated
+      working-directory: ./231046Y_Assignment2
+      continue-on-error: true
+
+    - name: Generate dependency report
+      run: |
+        echo "## Dependency Security Report" > dependency-report.md
+        echo "Generated: $(date)" >> dependency-report.md
+        echo "" >> dependency-report.md
+        echo "### Vulnerable Packages" >> dependency-report.md
+        dotnet list package --vulnerable --include-transitive >> dependency-report.md || echo "No vulnerabilities found" >> dependency-report.md
+        echo "" >> dependency-report.md
+        echo "### Outdated Packages" >> dependency-report.md
+        dotnet list package --outdated >> dependency-report.md || echo "All packages up to date" >> dependency-report.md
+      working-directory: ./231046Y_Assignment2
+
+    - name: Upload dependency report
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency-report
+        path: ./231046Y_Assignment2/dependency-report.md

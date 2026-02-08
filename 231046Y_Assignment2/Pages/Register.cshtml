@@ -1,0 +1,241 @@
+@page
+@model _231046Y_Assignment2.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Member Registration - Fresh Farm Market";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Fresh Farm Market - Membership Registration</h3>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                    {
+                        <div class="alert alert-success">@Model.SuccessMessage</div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger">@Model.ErrorMessage</div>
+                    }
+
+                    <form method="post" enctype="multipart/form-data" id="registerForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" id="recaptchaToken" name="recaptchaToken" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Registration.FullName" class="form-label"></label>
+                                <input asp-for="Registration.FullName" class="form-control" />
+                                <span asp-validation-for="Registration.FullName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Registration.Gender" class="form-label"></label>
+                                <select asp-for="Registration.Gender" class="form-select">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <span asp-validation-for="Registration.Gender" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Registration.CreditCardNo" class="form-label"></label>
+                            <input asp-for="Registration.CreditCardNo" class="form-control" type="text" maxlength="19" />
+                            <small class="form-text text-muted">Your credit card number will be encrypted and stored securely.</small>
+                            <span asp-validation-for="Registration.CreditCardNo" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Registration.MobileNo" class="form-label"></label>
+                                <input asp-for="Registration.MobileNo" class="form-control" />
+                                <span asp-validation-for="Registration.MobileNo" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Registration.Email" class="form-label"></label>
+                                <input asp-for="Registration.Email" class="form-control" type="email" />
+                                <span asp-validation-for="Registration.Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Registration.DeliveryAddress" class="form-label"></label>
+                            <textarea asp-for="Registration.DeliveryAddress" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Registration.DeliveryAddress" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Registration.Password" class="form-label"></label>
+                                <input asp-for="Registration.Password" class="form-control" type="password" id="password" />
+                                <div id="passwordStrength" class="mt-2"></div>
+                                <small class="form-text text-muted">Minimum 12 characters with uppercase, lowercase, numbers, and special characters.</small>
+                                <span asp-validation-for="Registration.Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Registration.ConfirmPassword" class="form-label"></label>
+                                <input asp-for="Registration.ConfirmPassword" class="form-control" type="password" />
+                                <span asp-validation-for="Registration.ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Registration.Photo" class="form-label"></label>
+                            <input asp-for="Registration.Photo" class="form-control" type="file" accept=".jpg,.jpeg" />
+                            <small class="form-text text-muted">Only JPG files are allowed.</small>
+                            <span asp-validation-for="Registration.Photo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Registration.AboutMe" class="form-label"></label>
+                            <textarea asp-for="Registration.AboutMe" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Registration.AboutMe" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="g-recaptcha" data-sitekey="@ViewData["ReCaptchaSiteKey"]" data-size="invisible"></div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="registerButton">Register</button>
+                            <a asp-page="/Login" class="btn btn-link">Already have an account? Login here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://www.google.com/recaptcha/api.js?render=@ViewData["ReCaptchaSiteKey"]" async defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('registerForm');
+            if (!form) return;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Client-side password validation before submission
+                var password = document.getElementById('password').value;
+                var confirmPassword = document.querySelector('input[name="Registration.ConfirmPassword"]').value;
+                var passwordStrength = checkPasswordStrength(password);
+                
+                if (!passwordStrength.isStrong) {
+                    alert('Password does not meet requirements:\n' + passwordStrength.feedback.join('\n'));
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+                
+                var siteKey = '@ViewData["ReCaptchaSiteKey"]';
+                if (!siteKey || siteKey === '') {
+                    // If no site key, submit without reCAPTCHA (for development)
+                    form.submit();
+                    return;
+                }
+
+                if (typeof grecaptcha === 'undefined') {
+                    alert('reCAPTCHA script failed to load. Please refresh the page and try again.');
+                    return;
+                }
+
+                grecaptcha.ready(function() {
+                    grecaptcha.execute(siteKey, {action: 'register'}).then(function(token) {
+                        if (token) {
+                            document.getElementById('recaptchaToken').value = token;
+                            form.submit();
+                        } else {
+                            alert('reCAPTCHA token generation failed. Please try again.');
+                        }
+                    }).catch(function(error) {
+                        console.error('reCAPTCHA error:', error);
+                        // For development, allow submission without token if using test keys
+                        if (siteKey.includes('6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')) {
+                            document.getElementById('recaptchaToken').value = 'test-token';
+                            form.submit();
+                        } else {
+                            alert('reCAPTCHA verification failed. Please refresh and try again.');
+                        }
+                    });
+                });
+            });
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            var password = this.value;
+            var strengthDiv = document.getElementById('passwordStrength');
+            var strength = checkPasswordStrength(password);
+            
+            strengthDiv.innerHTML = strength.html;
+            strengthDiv.className = 'mt-2 ' + strength.class;
+        });
+
+        function checkPasswordStrength(password) {
+            var score = 0;
+            var feedback = [];
+            var isStrong = false;
+
+            if (password.length >= 12) {
+                score += 2;
+            } else {
+                feedback.push('At least 12 characters');
+            }
+
+            if (/[a-z]/.test(password)) {
+                score += 1;
+            } else {
+                feedback.push('Lowercase letter');
+            }
+
+            if (/[A-Z]/.test(password)) {
+                score += 1;
+            } else {
+                feedback.push('Uppercase letter');
+            }
+
+            if (/[0-9]/.test(password)) {
+                score += 1;
+            } else {
+                feedback.push('Number');
+            }
+
+            if (/[!@@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                score += 1;
+            } else {
+                feedback.push('Special character');
+            }
+
+            isStrong = score >= 6;
+
+            var html = '';
+            var className = '';
+
+            if (isStrong) {
+                html = '<span class="badge bg-success">STRONG Password</span>';
+                className = 'text-success';
+            } else if (score >= 4) {
+                html = '<span class="badge bg-warning">Medium Password</span><br><small>Missing: ' + feedback.join(', ') + '</small>';
+                className = 'text-warning';
+            } else {
+                html = '<span class="badge bg-danger">Weak Password</span><br><small>Missing: ' + feedback.join(', ') + '</small>';
+                className = 'text-danger';
+            }
+
+            return { html: html, class: className, isStrong: isStrong, feedback: feedback };
+        }
+    </script>
+}

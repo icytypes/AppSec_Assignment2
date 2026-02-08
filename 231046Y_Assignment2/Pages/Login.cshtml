@@ -1,0 +1,118 @@
+@page
+@model _231046Y_Assignment2.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login - Fresh Farm Market";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0 text-center">Fresh Farm Market</h3>
+                    <p class="mb-0 text-center">Member Login</p>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger">@Model.ErrorMessage</div>
+                    }
+
+                    @if (Model.LockoutMinutes.HasValue)
+                    {
+                        <div class="alert alert-warning">
+                            <strong>Account Locked:</strong> Your account has been temporarily locked due to multiple failed login attempts. 
+                            Please try again in <strong>@Model.LockoutMinutes</strong> minute(s).
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                    }
+
+                    <form method="post" id="loginForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" id="recaptchaToken" name="recaptchaToken" />
+
+                        <div class="mb-3">
+                            <label asp-for="Login.Email" class="form-label"></label>
+                            <input asp-for="Login.Email" class="form-control" type="email" autocomplete="email" />
+                            <span asp-validation-for="Login.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Login.Password" class="form-label"></label>
+                            <input asp-for="Login.Password" class="form-control" type="password" autocomplete="current-password" />
+                            <span asp-validation-for="Login.Password" class="text-danger"></span>
+                        </div>
+
+                        @if (ViewData["Require2FA"] != null && ViewData["Require2FA"] is bool require2FA && require2FA)
+                        {
+                            <div class="mb-3">
+                                <label for="TwoFactorCode" class="form-label">Two-Factor Authentication Code</label>
+                                <input type="text" name="TwoFactorCode" id="TwoFactorCode" class="form-control" placeholder="Enter 6-digit code" maxlength="6" required />
+                                <small class="form-text text-muted">Enter the 6-digit code from your authenticator app.</small>
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <div class="g-recaptcha" data-sitekey="@ViewData["ReCaptchaSiteKey"]" data-size="invisible"></div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="loginButton">Login</button>
+                            <a asp-page="/Register" class="btn btn-link">Don't have an account? Register here</a>
+                            <a asp-page="/ForgotPassword" class="btn btn-link">Forgot Password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://www.google.com/recaptcha/api.js?render=@ViewData["ReCaptchaSiteKey"]" async defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('loginForm');
+            if (!form) return;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                var siteKey = '@ViewData["ReCaptchaSiteKey"]';
+                if (!siteKey || siteKey === '') {
+                    form.submit();
+                    return;
+                }
+
+                if (typeof grecaptcha === 'undefined') {
+                    alert('reCAPTCHA script failed to load. Please refresh the page and try again.');
+                    return;
+                }
+
+                grecaptcha.ready(function() {
+                    grecaptcha.execute(siteKey, {action: 'login'}).then(function(token) {
+                        if (token) {
+                            document.getElementById('recaptchaToken').value = token;
+                            form.submit();
+                        } else {
+                            alert('reCAPTCHA token generation failed. Please try again.');
+                        }
+                    }).catch(function(error) {
+                        console.error('reCAPTCHA error:', error);
+                        if (siteKey.includes('6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')) {
+                            document.getElementById('recaptchaToken').value = 'test-token';
+                            form.submit();
+                        } else {
+                            alert('reCAPTCHA verification failed. Please refresh and try again.');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

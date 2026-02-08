@@ -1,0 +1,122 @@
+﻿@page
+@model _231046Y_Assignment2.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home - Fresh Farm Market";
+}
+
+@if (Model.IsLoggedIn && Model.MemberInfo != null)
+{
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Welcome to Fresh Farm Market</h2>
+                    <div>
+                        <a asp-page="/ChangePassword" class="btn btn-outline-primary me-2">Change Password</a>
+                        @if (!Model.MemberInfo.IsTwoFactorEnabled)
+                        {
+                            <a asp-page="/Enable2FA" class="btn btn-outline-info me-2">Enable 2FA</a>
+                        }
+                        <a asp-page="/Logout" class="btn btn-outline-danger">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow mb-4">
+                    <div class="card-body text-center">
+                        @if (!string.IsNullOrEmpty(Model.MemberInfo.PhotoPath))
+                        {
+                            <img src="@Model.MemberInfo.PhotoPath" alt="Profile Photo" class="img-fluid rounded-circle mb-3" style="max-width: 200px; height: 200px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 200px; height: 200px;">
+                                <span class="text-white fs-1">@(!string.IsNullOrEmpty(Model.MemberInfo.FullName) ? Model.MemberInfo.FullName[0] : '?')</span>
+                            </div>
+                        }
+                        <h4>@Model.MemberInfo.FullName</h4>
+                        <p class="text-muted">@Model.MemberInfo.Email</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Member Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th width="30%">Full Name:</th>
+                                <td>@Model.MemberInfo.FullName</td>
+                            </tr>
+                            <tr>
+                                <th>Email Address:</th>
+                                <td>@Model.MemberInfo.Email</td>
+                            </tr>
+                            <tr>
+                                <th>Gender:</th>
+                                <td>@Model.MemberInfo.Gender</td>
+                            </tr>
+                            <tr>
+                                <th>Mobile Number:</th>
+                                <td>@Model.MemberInfo.MobileNo</td>
+                            </tr>
+                            <tr>
+                                <th>Delivery Address:</th>
+                                <td>@Model.MemberInfo.DeliveryAddress</td>
+                            </tr>
+                            <tr>
+                                <th>Credit Card Number:</th>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.MemberInfo.CreditCardNo) && Model.MemberInfo.CreditCardNo.Length >= 4)
+                                    {
+                                        <span class="text-muted">****-****-****-@Model.MemberInfo.CreditCardNo.Substring(Math.Max(0, Model.MemberInfo.CreditCardNo.Length - 4))</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">****-****-****-****</span>
+                                    }
+                                    <small class="d-block text-info">(Decrypted for display)</small>
+                                </td>
+                            </tr>
+                            @if (!string.IsNullOrEmpty(Model.MemberInfo.AboutMe))
+                            {
+                                <tr>
+                                    <th>About Me:</th>
+                                    <td>@Model.MemberInfo.AboutMe</td>
+                                </tr>
+                            }
+                            <tr>
+                                <th>Member Since:</th>
+                                <td>@Model.MemberInfo.CreatedDate.ToString("dd MMM yyyy")</td>
+                            </tr>
+                            @if (Model.MemberInfo.LastLoginDate.HasValue)
+                            {
+                                <tr>
+                                    <th>Last Login:</th>
+                                    <td>@Model.MemberInfo.LastLoginDate.Value.ToString("dd MMM yyyy HH:mm")</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center mt-5">
+        <h1 class="display-4">Welcome to Fresh Farm Market</h1>
+        <p class="lead">Your trusted source for fresh produce and groceries</p>
+        <div class="mt-4">
+            <a asp-page="/Register" class="btn btn-primary btn-lg me-2">Register Now</a>
+            <a asp-page="/Login" class="btn btn-outline-primary btn-lg">Login</a>
+        </div>
+    </div>
+}

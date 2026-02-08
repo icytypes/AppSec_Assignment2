@@ -1,0 +1,53 @@
+@page
+@model _231046Y_Assignment2.Pages.Enable2FAModel
+@{
+    ViewData["Title"] = "Enable Two-Factor Authentication - Fresh Farm Market";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Enable Two-Factor Authentication</h3>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger">@Model.ErrorMessage</div>
+                    }
+
+                    <div class="mb-3">
+                        <p class="lead">Scan this QR code with your authenticator app:</p>
+                        <div class="text-center mb-3">
+                            <img src="@Model.QRCodeUrl" alt="QR Code" class="img-fluid" />
+                        </div>
+                        <p class="text-muted">Or enter this secret manually: <code>@Model.Secret</code></p>
+                    </div>
+
+                    <form method="post">
+                        <input type="hidden" asp-for="Enable2FA.Secret" value="@Model.Secret" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Enable2FA.VerificationCode" class="form-label"></label>
+                            <input asp-for="Enable2FA.VerificationCode" class="form-control" placeholder="Enter 6-digit code" maxlength="6" />
+                            <span asp-validation-for="Enable2FA.VerificationCode" class="text-danger"></span>
+                            <small class="form-text text-muted">Enter the 6-digit code from your authenticator app to verify.</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Enable 2FA</button>
+                            <a asp-page="/Index" class="btn btn-link">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

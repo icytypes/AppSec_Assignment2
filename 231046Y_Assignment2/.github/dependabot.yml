@@ -1,0 +1,28 @@
+version: 2
+updates:
+  # Enable version updates for .NET
+  - package-ecosystem: "nuget"
+    directory: "/231046Y_Assignment2"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "yiter"  # Replace with your GitHub username
+    labels:
+      - "dependencies"
+      - "security"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    # Group updates for better PR management
+    groups:
+      microsoft-aspnetcore:
+        patterns:
+          - "Microsoft.AspNetCore.*"
+          - "Microsoft.EntityFrameworkCore.*"
+      security-updates:
+        dependency-type: "security"
+        update-types:
+          - "security"
