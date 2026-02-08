@@ -684,16 +684,39 @@ $.extend( $.validator, {
 		},
 
 		clean: function( selector ) {
-			// Security fix: Prevent XSS by only accepting DOM elements or jQuery objects
-			// Return the element directly if it's already a DOM node
-			if ( selector && selector.nodeType === 1 ) {
+			// Security fix: Prevent XSS by safely handling different input types
+			
+			// Fast-path: If selector is already a DOM element (nodeType 1 = element, 9 = document)
+			// or window/document object, return it directly
+			if ( selector && ( selector.nodeType === 1 || selector.nodeType === 9 || selector === window || selector === document ) ) {
 				return selector;
 			}
-			// If it's a jQuery object, return its first element
+			
+			// Fast-path: If selector is a jQuery object or array-like of elements, return first element
 			if ( selector && selector.jquery ) {
 				return selector[ 0 ];
 			}
-			// Otherwise, return null (don't pass strings into $() to prevent HTML evaluation)
+			if ( selector && selector.length && selector[ 0 ] && selector[ 0 ].nodeType === 1 ) {
+				return selector[ 0 ];
+			}
+			
+			// For strings: Only allow CSS selectors, reject HTML-like input
+			if ( typeof selector === "string" ) {
+				// Reject strings that look like HTML (start with <) to prevent HTML evaluation
+				if ( selector.trim().charAt( 0 ) === "<" ) {
+					return null;
+				}
+				// For valid selector strings, only search within this.currentForm to prevent XSS
+				// Use .find() which only interprets as CSS selector, not HTML
+				if ( this.currentForm ) {
+					var found = $( this.currentForm ).find( selector );
+					return found.length > 0 ? found[ 0 ] : null;
+				}
+				// If no currentForm, return null (safe fallback)
+				return null;
+			}
+			
+			// For any other type, return null (safe fallback)
 			return null;
 		},
 
