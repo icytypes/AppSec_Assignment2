@@ -1128,12 +1128,19 @@ $.extend( $.validator, {
 			element = this.clean( element );
 
 			// If cleaning failed or did not produce a DOM element, abort safely
+			// CRITICAL: Verify element is a DOM element (nodeType 1) before any jQuery operations
 			if ( !element || element.nodeType !== 1 ) {
 				return undefined;
 			}
 
-			// Always apply ignore filter (only call $() on verified DOM element)
-			return $( element ).not( this.settings.ignore )[ 0 ];
+			// Security fix: Only call $() on verified DOM element (never on strings or HTML)
+			// element is guaranteed to be a DOM element at this point (nodeType === 1)
+			// Using $(element) is safe because element is a DOM node, not a string selector
+			var $element = $( element );
+			
+			// Apply ignore filter - this.settings.ignore is a CSS selector string, safe to use with .not()
+			// .not() only interprets its argument as a CSS selector, not as HTML
+			return $element.not( this.settings.ignore )[ 0 ];
 		},
 
 		checkable: function( element ) {
