@@ -1127,7 +1127,8 @@ $.extend( $.validator, {
 			// Security fix: Normalize to a DOM element (handles jQuery objects safely)
 			element = this.clean( element );
 
-			if ( !element ) {
+			// If cleaning failed or did not produce a DOM element, abort safely
+			if ( !element || element.nodeType !== 1 ) {
 				return undefined;
 			}
 
