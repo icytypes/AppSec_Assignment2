@@ -108,9 +108,8 @@ Fresh Farm Market Team
                 if (!emailEnabled)
                 {
                     // For demo/development: log the email instead of sending
-                    // Mask email address in logs to prevent exposure of private information
-                    // Note: resetLink is not logged to prevent log forging attacks
-                    _logger.LogInformation("Email sending is disabled. Reset link generated for masked email: {MaskedEmail}", MaskEmail(toEmail));
+                    // Do not log email address or reset link to prevent exposure of private information and log forging
+                    _logger.LogInformation("Email sending is disabled. Password reset link generated.");
                     return true; // Return true so the user sees success message
                 }
 
@@ -146,15 +145,15 @@ Fresh Farm Market Team
                     mailMessage.To.Add(toEmail);
 
                     await client.SendMailAsync(mailMessage);
-                    // Mask email address in logs to prevent exposure of private information
-                    _logger.LogInformation("Password reset email sent to masked email: {MaskedEmail}", MaskEmail(toEmail));
+                    // Do not log email address to prevent exposure of private information
+                    _logger.LogInformation("Password reset email sent successfully.");
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                // Mask email address in logs to prevent exposure of private information
-                _logger.LogError(ex, "Error sending password reset email to masked email: {MaskedEmail}", MaskEmail(toEmail));
+                // Do not log email address to prevent exposure of private information
+                _logger.LogError(ex, "Error sending password reset email.");
                 return false;
             }
         }

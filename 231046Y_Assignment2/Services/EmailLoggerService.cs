@@ -41,8 +41,8 @@ Reset Link: {resetLink}
 ";
 
                 await File.AppendAllTextAsync(_emailLogPath, emailLog, Encoding.UTF8);
-                // Log only the directory path, not the full path with filename to reduce information exposure
-                _logger.LogInformation("Email logged to file in directory: {Directory}", emailDir);
+                // Do not log file path or directory to prevent exposure of private information
+                _logger.LogInformation("Email logged to file successfully.");
             }
             catch (Exception ex)
             {
