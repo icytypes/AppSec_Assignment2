@@ -79,10 +79,8 @@ namespace _231046Y_Assignment2.Pages
                 return Page();
             }
 
-            // Sanitize inputs
-            ChangePassword.CurrentPassword = _sanitizationService.SanitizeForDatabase(ChangePassword.CurrentPassword);
-            ChangePassword.NewPassword = _sanitizationService.SanitizeForDatabase(ChangePassword.NewPassword);
-            ChangePassword.ConfirmNewPassword = _sanitizationService.SanitizeForDatabase(ChangePassword.ConfirmNewPassword);
+            // Note: Passwords should NOT be sanitized - they're hashed immediately and never displayed
+            // Sanitization would change special characters and cause hash mismatches
 
             var member = await _context.Members.FindAsync(memberId.Value);
             if (member == null)

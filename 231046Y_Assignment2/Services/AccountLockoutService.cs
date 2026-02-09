@@ -8,7 +8,7 @@ namespace _231046Y_Assignment2.Services
     {
         private readonly ApplicationDbContext _context;
         private const int MaxFailedAttempts = 3;
-        private const int LockoutDurationMinutes = 15;
+        private const int LockoutDurationMinutes = 1; // 1 minute for demo/testing
 
         public AccountLockoutService(ApplicationDbContext context)
         {

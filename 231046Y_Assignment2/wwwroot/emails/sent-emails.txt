@@ -1,0 +1,156 @@
+﻿
+================================================================================
+Email Sent: 2026-02-09 18:49:26
+================================================================================
+To: 231046Y@mymail.nyp.edu.sg
+Subject: Password Reset Request - Fresh Farm Market
+
+
+Hello,
+
+You have requested to reset your password for your Fresh Farm Market account.
+
+Click the link below to reset your password:
+http://localhost:5233/ResetPassword?token=a09717bb-6cd6-4872-b4c2-f184327a5ded&email=231046Y%40mymail.nyp.edu.sg
+
+This link will expire in 24 hours.
+
+If you did not request this password reset, please ignore this email.
+
+Best regards,
+Fresh Farm Market Team
+
+
+Reset Link: http://localhost:5233/ResetPassword?token=a09717bb-6cd6-4872-b4c2-f184327a5ded&email=231046Y%40mymail.nyp.edu.sg
+================================================================================
+
+
+================================================================================
+Email Sent: 2026-02-09 19:01:28
+================================================================================
+To: 231046Y@mymail.nyp.edu.sg
+Subject: Password Reset Request - Fresh Farm Market
+
+
+Hello,
+
+You have requested to reset your password for your Fresh Farm Market account.
+
+Click the link below to reset your password:
+http://localhost:5233/ResetPassword?token=732ad92c-bfea-4f6d-a7b9-4b1f5bb9f400&email=231046Y%40mymail.nyp.edu.sg
+
+This link will expire in 24 hours.
+
+If you did not request this password reset, please ignore this email.
+
+Best regards,
+Fresh Farm Market Team
+
+
+Reset Link: http://localhost:5233/ResetPassword?token=732ad92c-bfea-4f6d-a7b9-4b1f5bb9f400&email=231046Y%40mymail.nyp.edu.sg
+================================================================================
+
+
+================================================================================
+Email Sent: 2026-02-09 21:00:23
+================================================================================
+To: 231046Y@mymail.nyp.edu.sg
+Subject: Password Reset Request - Fresh Farm Market
+
+
+Hello,
+
+You have requested to reset your password for your Fresh Farm Market account.
+
+Click the link below to reset your password:
+http://localhost:5233/ResetPassword?token=98fcfeec-79de-4a5a-b697-dce69960fcbc&email=231046Y%40mymail.nyp.edu.sg
+
+This link will expire in 24 hours.
+
+If you did not request this password reset, please ignore this email.
+
+Best regards,
+Fresh Farm Market Team
+
+
+Reset Link: http://localhost:5233/ResetPassword?token=98fcfeec-79de-4a5a-b697-dce69960fcbc&email=231046Y%40mymail.nyp.edu.sg
+================================================================================
+
+
+================================================================================
+Email Sent: 2026-02-09 21:00:25
+================================================================================
+To: 231046Y@mymail.nyp.edu.sg
+Subject: Password Reset Request - Fresh Farm Market
+
+
+Hello,
+
+You have requested to reset your password for your Fresh Farm Market account.
+
+Click the link below to reset your password:
+http://localhost:5233/ResetPassword?token=98a73a6e-e5b2-4690-af01-52309102e010&email=231046Y%40mymail.nyp.edu.sg
+
+This link will expire in 24 hours.
+
+If you did not request this password reset, please ignore this email.
+
+Best regards,
+Fresh Farm Market Team
+
+
+Reset Link: http://localhost:5233/ResetPassword?token=98a73a6e-e5b2-4690-af01-52309102e010&email=231046Y%40mymail.nyp.edu.sg
+================================================================================
+
+
+================================================================================
+Email Sent: 2026-02-09 21:03:12
+================================================================================
+To: 231046Y@mymail.nyp.edu.sg
+Subject: Password Reset Request - Fresh Farm Market
+
+
+Hello,
+
+You have requested to reset your password for your Fresh Farm Market account.
+
+Click the link below to reset your password:
+http://localhost:5233/ResetPassword?token=75c97f3f-a0d7-4842-96a2-6393ba550abd&email=231046Y%40mymail.nyp.edu.sg
+
+This link will expire in 24 hours.
+
+If you did not request this password reset, please ignore this email.
+
+Best regards,
+Fresh Farm Market Team
+
+
+Reset Link: http://localhost:5233/ResetPassword?token=75c97f3f-a0d7-4842-96a2-6393ba550abd&email=231046Y%40mymail.nyp.edu.sg
+================================================================================
+
+
+================================================================================
+Email Sent: 2026-02-09 21:07:49
+================================================================================
+To: 231046Y@mymail.nyp.edu.sg
+Subject: Password Reset Request - Fresh Farm Market
+
+
+Hello,
+
+You have requested to reset your password for your Fresh Farm Market account.
+
+Click the link below to reset your password:
+http://localhost:5233/ResetPassword?token=fa3b0f6f-bd12-46da-894f-041f3da5d7a9&email=231046Y%40mymail.nyp.edu.sg
+
+This link will expire in 24 hours.
+
+If you did not request this password reset, please ignore this email.
+
+Best regards,
+Fresh Farm Market Team
+
+
+Reset Link: http://localhost:5233/ResetPassword?token=fa3b0f6f-bd12-46da-894f-041f3da5d7a9&email=231046Y%40mymail.nyp.edu.sg
+================================================================================
+

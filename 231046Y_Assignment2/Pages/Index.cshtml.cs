@@ -46,41 +46,49 @@ namespace _231046Y_Assignment2.Pages
 
         public IActionResult OnGet()
         {
-            if (!_sessionService.IsSessionValid())
+            try
             {
-                return RedirectToPage("/Login");
+                if (!_sessionService.IsSessionValid())
+                {
+                    return RedirectToPage("/Login");
+                }
+
+                var memberId = _sessionService.GetCurrentMemberId();
+                if (memberId == null)
+                {
+                    return RedirectToPage("/Login");
+                }
+
+                var member = _context.Members.Find(memberId.Value);
+                if (member == null)
+                {
+                    _sessionService.ClearSession();
+                    return RedirectToPage("/Login");
+                }
+
+                IsLoggedIn = true;
+                MemberInfo = new MemberDisplayInfo
+                {
+                    FullName = member.FullName,
+                    CreditCardNo = _encryptionService.Decrypt(member.CreditCardNo),
+                    Gender = member.Gender,
+                    MobileNo = member.MobileNo,
+                    DeliveryAddress = member.DeliveryAddress,
+                    Email = member.Email,
+                    PhotoPath = member.PhotoPath,
+                    AboutMe = member.AboutMe,
+                    CreatedDate = member.CreatedDate,
+                    LastLoginDate = member.LastLoginDate,
+                    IsTwoFactorEnabled = member.IsTwoFactorEnabled
+                };
+
+                return Page();
             }
-
-            var memberId = _sessionService.GetCurrentMemberId();
-            if (memberId == null)
+            catch (Exception ex)
             {
-                return RedirectToPage("/Login");
+                _logger.LogError(ex, "Error loading homepage for member");
+                return RedirectToPage("/500");
             }
-
-            var member = _context.Members.Find(memberId.Value);
-            if (member == null)
-            {
-                _sessionService.ClearSession();
-                return RedirectToPage("/Login");
-            }
-
-            IsLoggedIn = true;
-            MemberInfo = new MemberDisplayInfo
-            {
-                FullName = member.FullName,
-                CreditCardNo = _encryptionService.Decrypt(member.CreditCardNo),
-                Gender = member.Gender,
-                MobileNo = member.MobileNo,
-                DeliveryAddress = member.DeliveryAddress,
-                Email = member.Email,
-                PhotoPath = member.PhotoPath,
-                AboutMe = member.AboutMe,
-                CreatedDate = member.CreatedDate,
-                LastLoginDate = member.LastLoginDate,
-                IsTwoFactorEnabled = member.IsTwoFactorEnabled
-            };
-
-            return Page();
         }
     }
 }

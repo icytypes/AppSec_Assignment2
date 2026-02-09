@@ -35,6 +35,10 @@ namespace _231046Y_Assignment2.Pages
             }
 
             _sessionService.ClearSession();
+            
+            // Clear any TempData messages to prevent them from showing on login page
+            TempData.Clear();
+            
             return RedirectToPage("/Login");
         }
 
@@ -51,6 +55,10 @@ namespace _231046Y_Assignment2.Pages
             }
 
             _sessionService.ClearSession();
+            
+            // Clear any TempData messages to prevent them from showing on login page
+            TempData.Clear();
+            
             return RedirectToPage("/Login");
         }
     }
