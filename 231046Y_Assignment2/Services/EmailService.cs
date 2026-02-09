@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 
 namespace _231046Y_Assignment2.Services
 {
@@ -14,6 +15,67 @@ namespace _231046Y_Assignment2.Services
             _configuration = configuration;
             _logger = logger;
             _emailLogger = emailLogger;
+        }
+
+        /// <summary>
+        /// Masks email address for logging purposes to prevent exposure of private information
+        /// Example: user@example.com -> u***@e***.com
+        /// </summary>
+        private static string MaskEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email) || !email.Contains('@'))
+                return "***";
+
+            var parts = email.Split('@');
+            if (parts.Length != 2)
+                return "***";
+
+            var localPart = parts[0];
+            var domain = parts[1];
+            var domainParts = domain.Split('.');
+
+            // Mask local part: show first char, mask the rest
+            var maskedLocal = localPart.Length > 0 
+                ? localPart[0] + new string('*', Math.Max(0, localPart.Length - 1))
+                : "***";
+
+            // Mask domain: show first char of domain and TLD
+            if (domainParts.Length >= 2)
+            {
+                var domainName = domainParts[0];
+                var tld = domainParts[domainParts.Length - 1];
+                var maskedDomain = (domainName.Length > 0 ? domainName[0].ToString() : "") + 
+                                   new string('*', Math.Max(0, domainName.Length - 1)) + 
+                                   "." + tld;
+                return $"{maskedLocal}@{maskedDomain}";
+            }
+
+            return $"{maskedLocal}@{domain[0]}***";
+        }
+
+        /// <summary>
+        /// Sanitizes user input for logging to prevent log injection/forging attacks
+        /// Removes newlines and other control characters that could be used to forge log entries
+        /// </summary>
+        private static string SanitizeForLogging(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            // Remove newlines and carriage returns to prevent log forging
+            var sanitized = input.Replace("\r", "").Replace("\n", "").Replace("\r\n", "");
+            
+            // Remove other control characters (except space)
+            sanitized = Regex.Replace(sanitized, @"[\x00-\x08\x0B-\x0C\x0E-\x1F]", "");
+            
+            // Limit length to prevent log flooding
+            const int maxLogLength = 200;
+            if (sanitized.Length > maxLogLength)
+            {
+                sanitized = sanitized.Substring(0, maxLogLength) + "... (truncated)";
+            }
+
+            return sanitized;
         }
 
         public async Task<bool> SendPasswordResetEmailAsync(string toEmail, string resetLink)
@@ -46,7 +108,9 @@ Fresh Farm Market Team
                 if (!emailEnabled)
                 {
                     // For demo/development: log the email instead of sending
-                    _logger.LogInformation("Email sending is disabled. Reset link for {Email}: {ResetLink}", toEmail, resetLink);
+                    // Mask email address in logs to prevent exposure of private information
+                    // Note: resetLink is not logged to prevent log forging attacks
+                    _logger.LogInformation("Email sending is disabled. Reset link generated for masked email: {MaskedEmail}", MaskEmail(toEmail));
                     return true; // Return true so the user sees success message
                 }
 
@@ -60,7 +124,9 @@ Fresh Farm Market Team
 
                 if (string.IsNullOrEmpty(smtpUsername) || string.IsNullOrEmpty(smtpPassword))
                 {
-                    _logger.LogWarning("SMTP credentials not configured. Email not sent. Reset link: {ResetLink}", resetLink);
+                    // Sanitize reset link before logging to prevent log forging
+                    var sanitizedResetLink = SanitizeForLogging(resetLink);
+                    _logger.LogWarning("SMTP credentials not configured. Email not sent. Reset link: {ResetLink}", sanitizedResetLink);
                     return false;
                 }
 
@@ -80,13 +146,15 @@ Fresh Farm Market Team
                     mailMessage.To.Add(toEmail);
 
                     await client.SendMailAsync(mailMessage);
-                    _logger.LogInformation("Password reset email sent to {Email}", toEmail);
+                    // Mask email address in logs to prevent exposure of private information
+                    _logger.LogInformation("Password reset email sent to masked email: {MaskedEmail}", MaskEmail(toEmail));
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending password reset email to {Email}", toEmail);
+                // Mask email address in logs to prevent exposure of private information
+                _logger.LogError(ex, "Error sending password reset email to masked email: {MaskedEmail}", MaskEmail(toEmail));
                 return false;
             }
         }
